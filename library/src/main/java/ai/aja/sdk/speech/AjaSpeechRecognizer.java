@@ -10,6 +10,9 @@ import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
 
+/**
+ * 语音识别类
+ */
 public class AjaSpeechRecognizer {
 
     private final SpeechRecognizer recognizer;
@@ -27,30 +30,60 @@ public class AjaSpeechRecognizer {
         this.recognizerListener = new InternalRecognizerListener();
     }
 
+    /**
+     * 创建语音识别实例
+     *
+     * @param context Activity Context
+     * @return 一个新的 {@link AjaSpeechRecognizer} 实例
+     */
     public static AjaSpeechRecognizer createRecognizer(Context context) {
         return new AjaSpeechRecognizer(context);
     }
 
+    /**
+     * 设置动作事件监听器
+     *
+     * @param actionListener 动作事件监听器
+     */
     public void setActionListener(AjaSpeechActionListener actionListener) {
         this.actionListener = actionListener;
     }
 
+    /**
+     * 设置音量事件监听器
+     *
+     * @param volumeListener 音量事件监听器
+     */
     public void setVolumeListener(AjaSpeechVolumeListener volumeListener) {
         this.volumeListener = volumeListener;
     }
 
+    /**
+     * 设置识别结果监听器
+     *
+     * @param resultListener 音量结果监听器
+     */
     public void setResultListener(AjaSpeechResultListener resultListener) {
         this.resultListener = resultListener;
     }
 
+    /**
+     * 开始录音及识别
+     */
     public void startListening() {
         this.recognizer.startListening(this.recognizerListener);
     }
 
+    /**
+     * 停止录音及识别
+     */
     public void stopListening() {
         this.recognizer.stopListening();
     }
 
+    /**
+     * 取消当前识别动作
+     */
     public void cancel() {
         this.recognizer.cancel();
     }

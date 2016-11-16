@@ -15,6 +15,9 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 
+/**
+ * 用于生成水波动画的 Drawable
+ */
 public class SonicDrawable extends Drawable implements Animatable {
 
     private final Paint paint = new Paint();
@@ -32,18 +35,39 @@ public class SonicDrawable extends Drawable implements Animatable {
 
     private int direction = 1;
 
+    /**
+     * 创建一个水波动画 Drawable，默认为 1 个波，黑色，周期 200 毫秒
+     */
     public SonicDrawable() {
         this(1);
     }
 
+    /**
+     * 创建一个水波动画 Drawable，默认为黑色，周期 200 毫秒
+     *
+     * @param wave 波的数量
+     */
     public SonicDrawable(int wave) {
         this(wave, Color.BLACK);
     }
 
+    /**
+     * 创建一个水波动画 Drawable，默认周期 200 毫秒
+     *
+     * @param wave  波的数量
+     * @param color 波的颜色
+     */
     public SonicDrawable(int wave, @ColorInt int color) {
         this(wave, color, 200);
     }
 
+    /**
+     * 创建一个水波动画 Drawable
+     *
+     * @param wave   波的数量
+     * @param color  波的颜色
+     * @param period 波动周期，单位为毫秒
+     */
     public SonicDrawable(int wave, @ColorInt int color, long period) {
         this.wave = wave;
 
@@ -72,6 +96,11 @@ public class SonicDrawable extends Drawable implements Animatable {
         setPeriod(period);
     }
 
+    /**
+     * 设置波动幅度，越大波动越厉害
+     *
+     * @param level 波动级别
+     */
     public void setLevel(float level) {
         this.pendingPeek = level;
     }
@@ -82,25 +111,42 @@ public class SonicDrawable extends Drawable implements Animatable {
         invalidateSelf();
     }
 
+    /**
+     * 设置波动周期，越小波动越厉害
+     *
+     * @param period 波动周期，单位为毫秒
+     */
     public void setPeriod(long period) {
         this.animator.setDuration(period / 2);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void start() {
         animator.start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stop() {
         animator.end();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isRunning() {
         return animator.isRunning();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void onBoundsChange(Rect bounds) {
         super.onBoundsChange(bounds);
@@ -108,6 +154,9 @@ public class SonicDrawable extends Drawable implements Animatable {
         invalidateSelf();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void draw(@NonNull Canvas canvas) {
         canvas.drawPath(path, paint);
@@ -134,20 +183,34 @@ public class SonicDrawable extends Drawable implements Animatable {
         path.close();
     }
 
+    /**
+     * 设置水波颜色
+     *
+     * @param color 水波颜色
+     */
     public void setColor(@ColorInt int color) {
         paint.setColor(color);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setAlpha(int alpha) {
         paint.setAlpha(alpha);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setColorFilter(ColorFilter colorFilter) {
         paint.setColorFilter(colorFilter);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getOpacity() {
         return PixelFormat.TRANSLUCENT;
