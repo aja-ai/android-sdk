@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:ignore="HardcodedText">
 
     <ai.aja.sdk.widget.SonicView
         android:id="@+id/sonic"
         android:layout_width="match_parent"
         android:layout_height="400dp"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:visibility="gone"
         tools:visibility="visible" />
@@ -18,16 +18,51 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         tools:text="语音输入测试" />
+
+    <TextView
+        android:id="@+id/response"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        tools:text="回应" />
+
+    <!--<HorizontalScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/response"-->
+        <!--tools:layout_height="240dp">-->
+
+        <LinearLayout
+            android:id="@+id/cards"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+    <!--</HorizontalScrollView>-->
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggle"
+        android:layout_margin="16dp"
+        android:text="正在等待 GPS 就绪…" />
 
     <ToggleButton
         android:id="@+id/toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
         android:textOff="开始识别"
         android:textOn="停止识别" />
 
-</FrameLayout>
+</RelativeLayout>
