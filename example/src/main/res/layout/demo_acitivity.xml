@@ -34,19 +34,11 @@
         android:gravity="end"
         tools:text="回应" />
 
-    <!--<HorizontalScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/response"-->
-        <!--tools:layout_height="240dp">-->
-
-        <LinearLayout
-            android:id="@+id/cards"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" />
-
-    <!--</HorizontalScrollView>-->
+    <ai.aja.sdk.widget.CardView
+        android:id="@+id/card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/response" />
 
     <TextView
         android:id="@+id/location"

@@ -6,12 +6,11 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.iflytek.cloud.SpeechError;
@@ -26,14 +25,12 @@ import ai.aja.sdk.dialogue.resolver.CardsResolver;
 import ai.aja.sdk.dialogue.resolver.TextResolver;
 import ai.aja.sdk.speech.AjaSpeechRecognizer;
 import ai.aja.sdk.speech.AjaSpeechResultListener;
-import ai.aja.sdk.widget.CardView;
 
 @SuppressLint("SetTextI18n")
 public class DemoActivity extends DemoActivityBase implements LocationListener {
 
     private AjaDialogue dialogue;
 
-    private LocationManager lm;
     private Location location;
 
     @Override
@@ -71,18 +68,18 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
         dialogue.registerResolver(new CardsResolver() {
             @Override
             protected boolean onCards(List<Card> cards) {
-                Log.d("cards", "cards: " + cards.size());
-                for (Card card : cards) {
-                    final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-
-                            getResources().getDimensionPixelSize(R.dimen.card_width),
-                            ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                    final CardView cardView = new CardView(DemoActivity.this);
-                    cardView.setLayoutParams(lp);
+                if (!cards.isEmpty()) {
+                    final Card card = cards.get(0);
                     cardView.setCard(card);
-
-                    cardsLayout.addView(cardView);
+                    cardView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse(card.href)));
+                            } catch (ActivityNotFoundException ignored) {
+                            }
+                        }
+                    });
                 }
                 return true;
             }
@@ -117,7 +114,7 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
                 if (checked) {
                     textView.setText(null);
                     responseView.setText(null);
-                    cardsLayout.removeAllViews();
+                    cardView.setCard(null);
                     sonicView.setVisibility(View.VISIBLE);
                     recognizer.startListening();
                 } else {
@@ -126,34 +123,15 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
                 }
             }
         });
-
-        lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-
-        final Card card = new Card();
-        card.width = 16;
-        card.height = 9;
-
-        final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
-
-                getResources().getDimensionPixelSize(R.dimen.card_width),
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        final CardView cardView = new CardView(DemoActivity.this);
-        cardView.setLayoutParams(lp);
-        cardView.setCard(card);
-
-        cardsLayout.addView(cardView);
     }
 
     @Override
     @SuppressWarnings("MissingPermission")
     protected void onPermissionDone() {
-        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, this);
-        location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, this);
+        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location != null) {
             locationView.setText(location.toString());
-//            dialogue.start("附近的美食", location);
         }
     }
 
@@ -161,7 +139,7 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
     @SuppressWarnings("MissingPermission")
     protected void onDestroy() {
         super.onDestroy();
-        lm.removeUpdates(this);
+        locationManager.removeUpdates(this);
     }
 
     @Override

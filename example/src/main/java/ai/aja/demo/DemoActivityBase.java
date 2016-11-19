@@ -2,16 +2,17 @@ package ai.aja.demo;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import ai.aja.sdk.widget.CardView;
 import ai.aja.sdk.widget.SonicView;
 
 public class DemoActivityBase extends AppCompatActivity {
@@ -19,9 +20,11 @@ public class DemoActivityBase extends AppCompatActivity {
     protected SonicView sonicView;
     protected TextView textView;
     protected TextView responseView;
-    protected ViewGroup cardsLayout;
+    protected CardView cardView;
     protected ToggleButton toggleButton;
     protected TextView locationView;
+
+    protected LocationManager locationManager;
 
     private boolean checkPermission(String permission) {
         return ContextCompat.checkSelfPermission(this, permission)
@@ -37,9 +40,11 @@ public class DemoActivityBase extends AppCompatActivity {
         sonicView = (SonicView) findViewById(R.id.sonic);
         textView = (TextView) findViewById(R.id.text);
         responseView = (TextView) findViewById(R.id.response);
-        cardsLayout = (ViewGroup) findViewById(R.id.cards);
+        cardView = (CardView) findViewById(R.id.card);
         toggleButton = (ToggleButton) findViewById(R.id.toggle);
         locationView = (TextView) findViewById(R.id.location);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if (checkPermission(Manifest.permission.RECORD_AUDIO)
                 && checkPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {

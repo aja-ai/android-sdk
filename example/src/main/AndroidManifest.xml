@@ -14,7 +14,7 @@
 
         <meta-data
             android:name="AJA_SECRET"
-            android:value="7f49411624afdf92d2d2399f6ca78461" />
+            android:value="0ec72f32621c50a571b6ef3fd6ed77f9" />
 
         <activity android:name=".DemoActivity">
             <intent-filter>
