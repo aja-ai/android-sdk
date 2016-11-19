@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import com.iflytek.cloud.SpeechError;
@@ -25,6 +26,7 @@ import ai.aja.sdk.dialogue.resolver.CardsResolver;
 import ai.aja.sdk.dialogue.resolver.TextResolver;
 import ai.aja.sdk.speech.AjaSpeechRecognizer;
 import ai.aja.sdk.speech.AjaSpeechResultListener;
+import ai.aja.sdk.widget.CardView;
 
 @SuppressLint("SetTextI18n")
 public class DemoActivity extends DemoActivityBase implements LocationListener {
@@ -68,8 +70,13 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
         dialogue.registerResolver(new CardsResolver() {
             @Override
             protected boolean onCards(List<Card> cards) {
-                if (!cards.isEmpty()) {
-                    final Card card = cards.get(0);
+                for (final Card card : cards) {
+                    final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
+                            getResources().getDimensionPixelSize(R.dimen.card_width),
+                            ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                    final CardView cardView = new CardView(DemoActivity.this);
+                    cardView.setLayoutParams(lp);
                     cardView.setCard(card);
                     cardView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -80,6 +87,8 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
                             }
                         }
                     });
+
+                    cardsLayout.addView(cardView);
                 }
                 return true;
             }
@@ -114,7 +123,7 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
                 if (checked) {
                     textView.setText(null);
                     responseView.setText(null);
-                    cardView.setCard(null);
+                    cardsLayout.removeAllViews();
                     sonicView.setVisibility(View.VISIBLE);
                     recognizer.startListening();
                 } else {

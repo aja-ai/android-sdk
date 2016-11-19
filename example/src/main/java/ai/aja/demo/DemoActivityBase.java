@@ -9,10 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import ai.aja.sdk.widget.CardView;
 import ai.aja.sdk.widget.SonicView;
 
 public class DemoActivityBase extends AppCompatActivity {
@@ -20,7 +20,7 @@ public class DemoActivityBase extends AppCompatActivity {
     protected SonicView sonicView;
     protected TextView textView;
     protected TextView responseView;
-    protected CardView cardView;
+    protected ViewGroup cardsLayout;
     protected ToggleButton toggleButton;
     protected TextView locationView;
 
@@ -40,7 +40,7 @@ public class DemoActivityBase extends AppCompatActivity {
         sonicView = (SonicView) findViewById(R.id.sonic);
         textView = (TextView) findViewById(R.id.text);
         responseView = (TextView) findViewById(R.id.response);
-        cardView = (CardView) findViewById(R.id.card);
+        cardsLayout = (ViewGroup) findViewById(R.id.cards);
         toggleButton = (ToggleButton) findViewById(R.id.toggle);
         locationView = (TextView) findViewById(R.id.location);
 
