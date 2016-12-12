@@ -21,9 +21,6 @@ import java.util.List;
 import ai.aja.sdk.Aja;
 import ai.aja.sdk.AjaDialogue;
 import ai.aja.sdk.dialogue.model.result.Card;
-import ai.aja.sdk.dialogue.resolver.ActionResolver;
-import ai.aja.sdk.dialogue.resolver.CardsResolver;
-import ai.aja.sdk.dialogue.resolver.TextResolver;
 import ai.aja.sdk.speech.AjaSpeechRecognizer;
 import ai.aja.sdk.speech.AjaSpeechResultListener;
 import ai.aja.sdk.widget.CardView;
@@ -42,34 +39,23 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
         // 创建对话管理器
 
         dialogue = Aja.createDialogue(this);
-
-        dialogue.registerResolver(new TextResolver() {
-            @Override
-            protected boolean onIntro(String intro) {
-                return false;
-            }
+        dialogue.setClient(new AjaDialogue.Client() {
 
             @Override
-            protected boolean onText(String text) {
+            protected void onText(String text) {
                 responseView.setText(text);
-                return true;
             }
-        });
 
-        dialogue.registerResolver(new ActionResolver() {
             @Override
-            protected boolean onAction(Intent intent) {
+            protected void onAction(Intent intent) {
                 try {
                     startActivity(intent);
                 } catch (ActivityNotFoundException ignored) {
                 }
-                return true;
             }
-        });
 
-        dialogue.registerResolver(new CardsResolver() {
             @Override
-            protected boolean onCards(List<Card> cards) {
+            protected void onCards(List<Card> cards) {
                 for (final Card card : cards) {
                     final ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(
                             getResources().getDimensionPixelSize(R.dimen.card_width),
@@ -90,8 +76,8 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
 
                     cardsLayout.addView(cardView);
                 }
-                return true;
             }
+
         });
 
         // 创建听写

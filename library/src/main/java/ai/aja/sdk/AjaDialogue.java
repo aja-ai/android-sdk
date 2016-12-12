@@ -1,17 +1,19 @@
 package ai.aja.sdk;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import ai.aja.sdk.dialogue.SessionApi;
 import ai.aja.sdk.dialogue.model.Envelope;
 import ai.aja.sdk.dialogue.model.Location;
+import ai.aja.sdk.dialogue.model.Result;
 import ai.aja.sdk.dialogue.model.Session;
-import ai.aja.sdk.dialogue.resolver.Resolver;
+import ai.aja.sdk.dialogue.model.result.Card;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,11 +23,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AjaDialogue {
 
-    private final ArrayList<Resolver> resolvers = new ArrayList<>();
-
     private final SessionApi sessionApi;
 
     private final String openId;
+
+    private Client client = new Client();
 
     AjaDialogue(Context context, String secret, String openId) {
         this.openId = openId;
@@ -43,8 +45,12 @@ public class AjaDialogue {
         sessionApi = retrofit.create(SessionApi.class);
     }
 
-    public void registerResolver(Resolver resolver) {
-        resolvers.add(resolver);
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public void start(String text) {
@@ -73,7 +79,10 @@ public class AjaDialogue {
         sessionApi.create(envelope).enqueue(new Callback<Session>() {
             @Override
             public void onResponse(Call<Session> call, Response<Session> response) {
-                resolve(response.body());
+                final Session session = response.body();
+                if (session != null) {
+                    client.resolve(session.result);
+                }
             }
 
             @Override
@@ -82,14 +91,59 @@ public class AjaDialogue {
         });
     }
 
-    private void resolve(Session session) {
-        if (session == null) {
-            return;
+    public static class Client {
+
+        public final void resolve(Result result) {
+            resolveText(result);
+            resolveAction(result);
+            resolveCards(result);
         }
 
-        for (Resolver resolver : resolvers) {
-            resolver.resolve(session.result);
+        private void resolveText(Result result) {
+            if (!TextUtils.isEmpty(result.intro)) {
+                onIntro(result.intro);
+            }
+
+            if (!TextUtils.isEmpty(result.text)) {
+                onText(result.text);
+            }
         }
+
+        protected void onIntro(String intro) {
+        }
+
+        protected void onText(String text) {
+        }
+
+        private void resolveAction(Result result) {
+            if (result.action == null || result.action.uri == null) {
+                return;
+            }
+
+            final Intent intent = new Intent(Intent.ACTION_VIEW, result.action.uri);
+
+            if (!TextUtils.isEmpty(result.action.target)) {
+                intent.setPackage(result.action.target);
+            }
+
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            onAction(intent);
+        }
+
+        protected void onAction(Intent intent) {
+        }
+
+        private void resolveCards(Result result) {
+            if (result.cards != null && !result.cards.isEmpty()) {
+                onCards(result.cards);
+            }
+        }
+
+        protected void onCards(List<Card> cards) {
+        }
+
     }
 
 }
