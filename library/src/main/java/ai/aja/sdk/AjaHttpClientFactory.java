@@ -20,7 +20,7 @@ class AjaHttpClientFactory {
             @Override
             public Response intercept(Chain chain) throws IOException {
                 return chain.proceed(chain.request().newBuilder()
-                        .header("Accept", "application/json")
+                        .header("Accept", "application/json; charset=utf-8")
                         .header("Accept-Language", buildAcceptLanguage())
                         .header("User-Agent", buildUserAgent(context))
                         .header("X-SECRET", secret)

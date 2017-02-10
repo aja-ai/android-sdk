@@ -6,6 +6,10 @@ public class Session {
 
     public String action;
 
+    public Data data;
+
+    public Meta meta;
+
     public Result result;
 
 }

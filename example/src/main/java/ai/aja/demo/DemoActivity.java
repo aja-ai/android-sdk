@@ -20,6 +20,8 @@ import java.util.List;
 
 import ai.aja.sdk.Aja;
 import ai.aja.sdk.AjaDialogue;
+import ai.aja.sdk.dialogue.model.question.Key;
+import ai.aja.sdk.dialogue.model.question.Question;
 import ai.aja.sdk.dialogue.model.result.Card;
 import ai.aja.sdk.speech.AjaSpeechRecognizer;
 import ai.aja.sdk.speech.AjaSpeechResultListener;
@@ -44,6 +46,20 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
             @Override
             protected void onText(String text) {
                 responseView.setText(text);
+            }
+
+            @Override
+            protected void onQuestion(Question question, String id) {
+                Key key = new Key();
+                key.key = question.name;
+                key.value = "广州塔";
+
+                dialogue.question(key, id, new AjaDialogue.OnQuestionResponse() {
+                    @Override
+                    public void onResponse(List<Object> values) {
+                        responseView.setText(values.toString());
+                    }
+                });
             }
 
             @Override
@@ -79,6 +95,8 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
             }
 
         });
+
+        dialogue.start("导航到");
 
         // 创建听写
 

@@ -3,6 +3,7 @@
 
     <uses-feature android:name="android.hardware.location.gps" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".DemoApplication"
@@ -14,7 +15,7 @@
 
         <meta-data
             android:name="AJA_SECRET"
-            android:value="6370f25d38c65200ef9f541c6a7ea30b" />
+            android:value="bbcea49f62c0b2d016d9b95a8dedf5e4" />
 
         <activity android:name=".DemoActivity">
             <intent-filter>

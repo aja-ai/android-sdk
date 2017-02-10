@@ -7,12 +7,18 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 
 import java.util.List;
+import java.util.Map;
 
+import ai.aja.sdk.dialogue.QuestionsApi;
 import ai.aja.sdk.dialogue.SessionApi;
+import ai.aja.sdk.dialogue.model.Data;
 import ai.aja.sdk.dialogue.model.Envelope;
 import ai.aja.sdk.dialogue.model.Location;
 import ai.aja.sdk.dialogue.model.Result;
 import ai.aja.sdk.dialogue.model.Session;
+import ai.aja.sdk.dialogue.model.question.Key;
+import ai.aja.sdk.dialogue.model.question.Question;
+import ai.aja.sdk.dialogue.model.question.Questions;
 import ai.aja.sdk.dialogue.model.result.Card;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -23,7 +29,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AjaDialogue {
 
+    private static final String TAG = "AjaDialogue";
+
     private final SessionApi sessionApi;
+    private final QuestionsApi questionsApi;
 
     private final String openId;
 
@@ -38,11 +47,12 @@ public class AjaDialogue {
 
         final Retrofit retrofit = new Retrofit.Builder()
                 .client(httpClient)
-                .baseUrl(BuildConfig.AJA_API_BASE)
+                .baseUrl("http://192.168.2.227/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         sessionApi = retrofit.create(SessionApi.class);
+        questionsApi = retrofit.create(QuestionsApi.class);
     }
 
     public void setClient(Client client) {
@@ -51,6 +61,26 @@ public class AjaDialogue {
 
     public Client getClient() {
         return client;
+    }
+
+    public void question(Key key, String id, final OnQuestionResponse onQuestionResponse) {
+        questionsApi.question(id, key).enqueue(new Callback<Session>() {
+            @Override
+            public void onResponse(Call<Session> call, Response<Session> response) {
+                final Session session = response.body();
+                if (session != null) {
+                    Map<String, List<Object>> values = session.data.values;
+                    for (String key : values.keySet()) {
+                        onQuestionResponse.onResponse(values.get(key));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Session> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     public void start(String text) {
@@ -81,31 +111,42 @@ public class AjaDialogue {
             public void onResponse(Call<Session> call, Response<Session> response) {
                 final Session session = response.body();
                 if (session != null) {
-                    client.resolve(session.result);
+                    client.resolve(session);
                 }
             }
 
             @Override
             public void onFailure(Call<Session> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
 
     public static class Client {
 
-        public final void resolve(Result result) {
-            resolveText(result);
-            resolveAction(result);
-            resolveCards(result);
+        public final void resolve(Session session) {
+            resolveText(session);
+            resolveAction(session.result);
+            resolveCards(session.result);
         }
 
-        private void resolveText(Result result) {
-            if (!TextUtils.isEmpty(result.intro)) {
-                onIntro(result.intro);
-            }
+        private void resolveText(Session session) {
+            final Result result = session.result;
+            final Data data = session.data;
+            if (data != null) {
+                if (data.questions.size() > 0) {
+                    Questions questions = data.questions.get(0);
+                    onText(questions.text);
+                    onQuestion(questions.question, session.id);
+                } else if (result != null) {
+                    if (!TextUtils.isEmpty(result.text)) {
+                        onText(result.text);
+                    }
 
-            if (!TextUtils.isEmpty(result.text)) {
-                onText(result.text);
+                    if (!TextUtils.isEmpty(result.intro)) {
+                        onIntro(result.intro);
+                    }
+                }
             }
         }
 
@@ -115,7 +156,12 @@ public class AjaDialogue {
         protected void onText(String text) {
         }
 
+        protected void onQuestion(Question question, String id) {
+        }
+
         private void resolveAction(Result result) {
+            if (result == null) return;
+
             if (result.action == null || result.action.uri == null) {
                 return;
             }
@@ -136,6 +182,8 @@ public class AjaDialogue {
         }
 
         private void resolveCards(Result result) {
+            if (result == null) return;
+
             if (result.cards != null && !result.cards.isEmpty()) {
                 onCards(result.cards);
             }
@@ -143,6 +191,12 @@ public class AjaDialogue {
 
         protected void onCards(List<Card> cards) {
         }
+
+    }
+
+    public interface OnQuestionResponse {
+
+        void onResponse(List<Object> values);
 
     }
 
