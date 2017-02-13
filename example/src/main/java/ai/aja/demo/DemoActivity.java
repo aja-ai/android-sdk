@@ -18,14 +18,13 @@ import com.iflytek.cloud.SpeechError;
 
 import java.util.List;
 
-import ai.aja.sdk.Aja;
-import ai.aja.sdk.AjaDialogue;
-import ai.aja.sdk.dialogue.model.question.Key;
-import ai.aja.sdk.dialogue.model.question.Question;
-import ai.aja.sdk.dialogue.model.result.Card;
-import ai.aja.sdk.speech.AjaSpeechRecognizer;
-import ai.aja.sdk.speech.AjaSpeechResultListener;
-import ai.aja.sdk.widget.CardView;
+import aja.xfyun.cn.Aja;
+import aja.xfyun.cn.AjaDialogue;
+import aja.xfyun.cn.dialogue.model.question.Question;
+import aja.xfyun.cn.dialogue.model.result.Card;
+import aja.xfyun.cn.speech.AjaSpeechRecognizer;
+import aja.xfyun.cn.speech.AjaSpeechResultListener;
+import aja.xfyun.cn.widget.CardView;
 
 @SuppressLint("SetTextI18n")
 public class DemoActivity extends DemoActivityBase implements LocationListener {
@@ -50,7 +49,7 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
 
             @Override
             protected void onQuestion(Question question, String id) {
-                Key key = new Key();
+                /*Key key = new Key();
                 key.key = question.name;
                 key.value = "广州塔";
 
@@ -59,7 +58,7 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
                     public void onResponse(List<Object> values) {
                         responseView.setText(values.toString());
                     }
-                });
+                });*/
             }
 
             @Override
@@ -95,8 +94,6 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
             }
 
         });
-
-        dialogue.start("导航到");
 
         // 创建听写
 

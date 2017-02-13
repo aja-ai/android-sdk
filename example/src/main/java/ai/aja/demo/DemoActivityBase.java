@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import ai.aja.sdk.widget.SonicView;
+import aja.xfyun.cn.widget.SonicView;
 
 public class DemoActivityBase extends AppCompatActivity {
 

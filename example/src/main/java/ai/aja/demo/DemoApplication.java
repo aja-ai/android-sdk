@@ -2,7 +2,7 @@ package ai.aja.demo;
 
 import android.app.Application;
 
-import ai.aja.sdk.Aja;
+import aja.xfyun.cn.Aja;
 
 public class DemoApplication extends Application {
 
