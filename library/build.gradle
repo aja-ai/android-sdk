@@ -14,6 +14,7 @@ android {
         versionName "1.0"
 
         buildConfigField "String", "AJA_API_BASE", "\"${AJA_API_BASE}\""
+        buildConfigField "String", "TEST_URL", "\"${TEST_URL}\""
     }
 
     buildTypes {

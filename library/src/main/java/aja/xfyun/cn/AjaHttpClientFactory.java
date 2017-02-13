@@ -7,7 +7,6 @@ import android.util.DisplayMetrics;
 import java.io.IOException;
 import java.util.Locale;
 
-import ai.aja.sdk.BuildConfig;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;

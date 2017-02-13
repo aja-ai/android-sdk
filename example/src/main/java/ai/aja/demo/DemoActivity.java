@@ -10,9 +10,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.iflytek.cloud.SpeechError;
 
@@ -20,6 +25,7 @@ import java.util.List;
 
 import aja.xfyun.cn.Aja;
 import aja.xfyun.cn.AjaDialogue;
+import aja.xfyun.cn.dialogue.model.question.Key;
 import aja.xfyun.cn.dialogue.model.question.Question;
 import aja.xfyun.cn.dialogue.model.result.Card;
 import aja.xfyun.cn.speech.AjaSpeechRecognizer;
@@ -33,6 +39,8 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
 
     private Location location;
 
+    private String text;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,21 +52,13 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
 
             @Override
             protected void onText(String text) {
+                DemoActivity.this.text = text;
                 responseView.setText(text);
             }
 
             @Override
             protected void onQuestion(Question question, String id) {
-                /*Key key = new Key();
-                key.key = question.name;
-                key.value = "广州塔";
-
-                dialogue.question(key, id, new AjaDialogue.OnQuestionResponse() {
-                    @Override
-                    public void onResponse(List<Object> values) {
-                        responseView.setText(values.toString());
-                    }
-                });*/
+                showQuestionDialog(question, id);
             }
 
             @Override
@@ -133,6 +133,31 @@ public class DemoActivity extends DemoActivityBase implements LocationListener {
                 }
             }
         });
+
+    }
+
+    private void showQuestionDialog(final Question question, final String id) {
+        View view = LayoutInflater.from(this).inflate(R.layout.question_dialog, null);
+        final AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(view)
+                .show();
+        final EditText editText = (EditText) view.findViewById(R.id.edit);
+        TextView title = (TextView) view.findViewById(R.id.title);
+        title.setText(text);
+        Button done = (Button) view.findViewById(R.id.done);
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Key key = new Key();
+                key.key = question.name;
+                key.value = editText.getText().toString();
+
+                dialogue.question(key, id);
+
+                dialog.dismiss();
+            }
+        });
+
     }
 
     @Override

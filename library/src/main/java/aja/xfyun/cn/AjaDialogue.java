@@ -2,12 +2,12 @@ package aja.xfyun.cn;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
 import java.util.List;
-import java.util.Map;
 
 import aja.xfyun.cn.dialogue.QuestionsApi;
 import aja.xfyun.cn.dialogue.SessionApi;
@@ -63,16 +63,18 @@ public class AjaDialogue {
         return client;
     }
 
-    public void question(Key key, String id, final OnQuestionResponse onQuestionResponse) {
+    /**
+     * 请求 question 接口
+     * @param key
+     * @param id
+     */
+    public void question(@NonNull final Key key, String id) {
         questionsApi.question(id, key).enqueue(new Callback<Session>() {
             @Override
             public void onResponse(Call<Session> call, Response<Session> response) {
                 final Session session = response.body();
                 if (session != null) {
-                    Map<String, List<Object>> values = session.data.values;
-                    for (String key : values.keySet()) {
-                        onQuestionResponse.onResponse(values.get(key));
-                    }
+                    client.resolve(session);
                 }
             }
 
@@ -133,19 +135,19 @@ public class AjaDialogue {
         private void resolveText(Session session) {
             final Result result = session.result;
             final Data data = session.data;
-            if (data != null) {
+            if (result == null) {
                 if (data.questions.size() > 0) {
                     Questions questions = data.questions.get(0);
                     onText(questions.text);
                     onQuestion(questions.question, session.id);
-                } else if (result != null) {
-                    if (!TextUtils.isEmpty(result.text)) {
-                        onText(result.text);
-                    }
+                }
+            } else {
+                if (!TextUtils.isEmpty(result.text)) {
+                    onText(result.text);
+                }
 
-                    if (!TextUtils.isEmpty(result.intro)) {
-                        onIntro(result.intro);
-                    }
+                if (!TextUtils.isEmpty(result.intro)) {
+                    onIntro(result.intro);
                 }
             }
         }
@@ -191,12 +193,6 @@ public class AjaDialogue {
 
         protected void onCards(List<Card> cards) {
         }
-
-    }
-
-    public interface OnQuestionResponse {
-
-        void onResponse(List<Object> values);
 
     }
 
