@@ -126,6 +126,8 @@ public class AjaDialogue {
 
     public static class Client {
 
+        private int count = 0;
+
         public final void resolve(Session session) {
             resolveText(session);
             resolveAction(session.result);
@@ -137,9 +139,14 @@ public class AjaDialogue {
             final Data data = session.data;
             if (result == null) {
                 if (data.questions.size() > 0) {
-                    Questions questions = data.questions.get(0);
-                    onText(questions.text);
-                    onQuestion(questions.question, session.id);
+                    if (count <= data.questions.size() - 1) {
+                        Questions questions = data.questions.get(count);
+                        onText(questions.text);
+                        onQuestion(questions.question, session.id);
+                        count += 1;
+                    } else {
+                        count = 0;
+                    }
                 }
             } else {
                 if (!TextUtils.isEmpty(result.text)) {
